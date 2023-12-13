@@ -84,6 +84,7 @@ public:
     virtual std::string closeDocStore() = 0;
     virtual void abort(AbortException *ae) = 0;
     virtual bool addDocument(document::Document *doc, analysis::Analyzer *analyzer) = 0;
+    virtual bool addNullDocument(document::Document *doc) = 0;
     virtual bool updateDocument(Term* t, CL_NS(document)::Document* doc, CL_NS(analysis)::Analyzer* analyzer) = 0;
     virtual const std::vector<string> *abortedFiles() = 0;
     virtual bool bufferDeleteTerm(Term *term) = 0;

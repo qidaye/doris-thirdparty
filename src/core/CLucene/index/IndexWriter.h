@@ -1019,6 +1019,7 @@ public:
    * value of {@link #getAnalyzer()}
    */
   void addDocument(CL_NS(document)::Document* doc, CL_NS(analysis)::Analyzer* analyzer=NULL);
+  void addNullDocument(CL_NS(document)::Document* doc);
   //void addDocument(CL_NS(document)::Document* doc, CL_NS(analysis)::SAnalyzer* sanalyzer);
 
 
