@@ -96,55 +96,61 @@ int main() {
 
     std::string name = "description";
     std::unordered_map<std::string, std::vector<std::string>> datas;
-    {
-        for (int32_t i = 1; i <= 6; i++) {
-            std::ifstream ifs;
-            std::string path = "/mnt/disk2/yangsiyu/git_events/2022-09-13-";
-            path += std::to_string(i + 5);
-            path += ".json";
-            ifs.open(path, std::ios::in);
-            std::string line;
-            ondemand::parser parser;
-            int j = 0;
-            while (getline(ifs, line)) {
-                // padded_string json(line);
-                // ondemand::document tweet = parser.iterate(json);
-                // for (auto d : tweet.get_object()) {
-                //     std::string key = (std::string)d.unescaped_key().value();
-                //     if (key == "payload") {
-                //         for (auto d1 : d.value().get_object()) {
-                //             std::string key1 = (std::string)d1.unescaped_key().value();
-                //             if (key1 == name) {
-                //                 if (!d1.value().is_null()) {
-                //                     std::string value =
-                //                             (std::string)d1.value().raw_json_token().value();
-                //                     // if (value == "\"https://api.github.com/users/Juveniel\"") {
-                //                     //     static int32_t a = 0;
-                //                     //     std::cout << key1 << ", " << value << ", " << a++ << std::endl;
-                //                     // }
-                //                     datas[key1].emplace_back(std::move(value));
-                //                 }
-                //             }
-                //         }
-                //     }
-
-                //     // if (key == name) {
-                //     //     std::string value = (std::string)d.value().raw_json_token().value();
-                //     //     datas[key].emplace_back(std::move(value));
-                //     // }
-                // }
-                datas[name].emplace_back(line);
-                // if (++j == 10) {
-                //     break;
-                // }
-            }
-            ifs.close();
-        }
-    }
+//    {
+//        for (int32_t i = 1; i <= 2; i++) {
+//            std::ifstream ifs;
+//            std::string path = "/mnt/disk2/luen/github_events/2022-09-13-";
+//            path += std::to_string(i + 5);
+//            path += ".json";
+//            ifs.open(path, std::ios::in);
+//            std::string line;
+//            ondemand::parser parser;
+//            int j = 0;
+//            while (getline(ifs, line)) {
+//                if (datas[name].size() >= 20) {
+//                    break;
+//                }
+//                 padded_string json(line);
+//                 ondemand::document tweet = parser.iterate(json);
+//                 for (auto d : tweet.get_object()) {
+//                     std::string key = (std::string)d.unescaped_key().value();
+//                     if (key == "payload") {
+//                         for (auto d1 : d.value().get_object()) {
+//                             std::string key1 = (std::string)d1.unescaped_key().value();
+//                             if (key1 == name) {
+//                                 if (!d1.value().is_null()) {
+//                                     std::string value =
+//                                             (std::string)d1.value().raw_json_token().value();
+//                                     // if (value == "\"https://api.github.com/users/Juveniel\"") {
+//                                     //     static int32_t a = 0;
+//                                     //     std::cout << key1 << ", " << value << ", " << a++ << std::endl;
+//                                     // }
+//                                     datas[key1].emplace_back(std::move(value));
+//                                     if (datas[name].size() >= 20) {
+//                                         break;
+//                                     }
+//                                 }
+//                             }
+//                         }
+//                     }
+//
+//                     // if (key == name) {
+//                     //     std::string value = (std::string)d.value().raw_json_token().value();
+//                     //     datas[key].emplace_back(std::move(value));
+//                     // }
+//                 }
+////                datas[name].emplace_back(line);
+//                // if (++j == 10) {
+//                //     break;
+//                // }
+//            }
+//            ifs.close();
+//        }
+//    }
 
     // {
     //     std::ofstream ofs;
-    //     ofs.open("/mnt/disk2/yangsiyu/git_events/a.txt");
+    //     ofs.open("/mnt/disk2/luen/git_events/a.txt");
     //     for (auto& data : datas[name]) {
     //         ofs << data << std::endl;
     //     }
@@ -153,7 +159,7 @@ int main() {
 
     // {
     //     std::ifstream ifs;
-    //     ifs.open("/mnt/disk2/yangsiyu/git_events/a.txt");
+    //     ifs.open("/mnt/disk2/luen/git_events/a.txt");
     //     std::string line;
     //     while (getline(ifs, line)) {
     //         datas[name].push_back(line);
@@ -162,58 +168,59 @@ int main() {
     // }
 
     std::cout << "getchar: " << datas[name].size() << ", pid: " << getpid() << std::endl;
-    getchar();
+//    getchar();
 
     // std::vector<std::thread> threads;
     // for (int32_t i = 0; i < 3; i++) {
     //     threads.emplace_back([&datas, i]() {
-    for (int32_t k = 0; k < 1; k++) {
-        TimeGuard t("time");
-
-        std::string path = "/mnt/disk2/yangsiyu/clucene/index" + std::to_string(k + 1);
-        // auto analyzer = _CLNEW lucene::analysis::standard::StandardAnalyzer();
-        auto analyzer = _CLNEW lucene::analysis::SimpleAnalyzer<char>();
-        // auto analyzer = _CLNEW lucene::analysis::SimpleAnalyzer<TCHAR>();
-        auto indexwriter = _CLNEW lucene::index::IndexWriter(path.c_str(), analyzer, true);
-        indexwriter->setRAMBufferSizeMB(2048);
-        indexwriter->setMaxFieldLength(0x7FFFFFFFL);
-        indexwriter->setMergeFactor(100000000);
-        indexwriter->setUseCompoundFile(false);
-
-        auto char_string_reader = _CLNEW lucene::util::SStringReader<char>;
-
-        auto doc = _CLNEW lucene::document::Document();
-        auto field_config =
-                lucene::document::Field::STORE_NO | lucene::document::Field::INDEX_NONORMS;
-        field_config |= lucene::document::Field::INDEX_TOKENIZED;
-        auto field_name = std::wstring(name.begin(), name.end());
-        auto field = _CLNEW lucene::document::Field(field_name.c_str(), field_config);
-        field->setOmitTermFreqAndPositions(false);
-        doc->add(*field);
-
-        for (int32_t j = 0; j < 1; j++) {
-            for (auto& str : datas[name]) {
-                // std::cout << "name: " << name << ", value: " << str << std::endl;
-                // auto field_value = to_wide_string(str);
-                // field->setValue(field_value.data(), field_value.size());
-
-                char_string_reader->init(str.data(), str.size(), false);
-                auto stream = analyzer->reusableTokenStream(field->name(), char_string_reader);
-                field->setValue(stream);
-
-                indexwriter->addDocument(doc);
-            }
-        }
-
-        std::cout << "---------------------" << std::endl;
-
-        indexwriter->close();
-
-        _CLLDELETE(indexwriter);
-        _CLLDELETE(doc);
-        _CLLDELETE(analyzer);
-        _CLLDELETE(char_string_reader);
-    }
+//    for (int32_t k = 0; k < 1; k++) {
+//        TimeGuard t("time");
+//
+//        std::string path = "/mnt/disk2/luen/clucene/index" + std::to_string(k + 1);
+//        // auto analyzer = _CLNEW lucene::analysis::standard::StandardAnalyzer();
+//        auto analyzer = _CLNEW lucene::analysis::SimpleAnalyzer<char>();
+//        // auto analyzer = _CLNEW lucene::analysis::SimpleAnalyzer<TCHAR>();
+//        auto indexwriter = _CLNEW lucene::index::IndexWriter(path.c_str(), analyzer, true);
+//        indexwriter->setRAMBufferSizeMB(-1);
+//        indexwriter->setMaxBufferedDocs(10);
+//        indexwriter->setMaxFieldLength(0x7FFFFFFFL);
+//        indexwriter->setMergeFactor(100000000);
+//        indexwriter->setUseCompoundFile(false);
+//
+//        auto char_string_reader = _CLNEW lucene::util::SStringReader<char>;
+//
+//        auto doc = _CLNEW lucene::document::Document();
+//        auto field_config =
+//                lucene::document::Field::STORE_NO | lucene::document::Field::INDEX_NONORMS;
+//        field_config |= lucene::document::Field::INDEX_TOKENIZED;
+//        auto field_name = std::wstring(name.begin(), name.end());
+//        auto field = _CLNEW lucene::document::Field(field_name.c_str(), field_config);
+//        field->setOmitTermFreqAndPositions(false);
+//        doc->add(*field);
+//
+//        for (int32_t j = 0; j < 1; j++) {
+//            for (auto& str : datas[name]) {
+//                // std::cout << "name: " << name << ", value: " << str << std::endl;
+//                // auto field_value = to_wide_string(str);
+//                // field->setValue(field_value.data(), field_value.size());
+//
+//                char_string_reader->init(str.data(), str.size(), false);
+//                auto stream = analyzer->reusableTokenStream(field->name(), char_string_reader);
+//                field->setValue(stream);
+//
+//                indexwriter->addDocument(doc);
+//            }
+//        }
+//
+//        std::cout << "---------------------" << std::endl;
+//
+//        indexwriter->close();
+//
+//        _CLLDELETE(indexwriter);
+//        _CLLDELETE(doc);
+//        _CLLDELETE(analyzer);
+//        _CLLDELETE(char_string_reader);
+//    }
     //     });
     // }
 
@@ -226,8 +233,9 @@ int main() {
     auto indexCompaction = [&datas, &name](std::vector<lucene::store::Directory*> srcDirs,
                                            std::vector<lucene::store::Directory*> destDirs,
                                            int32_t count) {
-        auto indexwriter = _CLNEW lucene::index::IndexWriter("/mnt/disk2/yangsiyu/clucene/index0",
-                                                             nullptr, true);
+        lucene::analysis::SimpleAnalyzer<char> analyzer;
+        auto indexwriter = _CLNEW lucene::index::IndexWriter("/mnt/disk2/luen/clucene/index0",
+                                                             &analyzer, true);
 
         std::vector<std::vector<std::pair<uint32_t, uint32_t>>> trans_vec(
                 srcDirs.size(), std::vector<std::pair<uint32_t, uint32_t>>(count));
@@ -257,20 +265,17 @@ int main() {
     {
         {
             std::vector<lucene::store::Directory*> srcDirs;
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index1"));
+//            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index1"));
+            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index2"));
+            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index3"));
+            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index4"));
+            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index5"));
+            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index6"));
             std::vector<lucene::store::Directory*> destDirs;
-            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index10"));
-            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index11"));
-            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index12"));
-            indexCompaction(srcDirs, destDirs, datas[name].size());
+            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index10"));
+            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index11"));
+            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index12"));
+            indexCompaction(srcDirs, destDirs, 111477);
             for (auto& p : srcDirs) {
                 p->close();
                 _CLDECDELETE(p);
@@ -280,122 +285,122 @@ int main() {
                 _CLDECDELETE(p);
             }
         }
-        {
-            std::vector<lucene::store::Directory*> srcDirs;
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index10"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index11"));
-            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index12"));
-            std::vector<lucene::store::Directory*> destDirs;
-            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/yangsiyu/clucene/index13"));
-            indexCompaction(srcDirs, destDirs, datas[name].size() * 3 * 3);
-            for (auto& p : srcDirs) {
-                p->close();
-                _CLDECDELETE(p);
-            }
-            for (auto& p : destDirs) {
-                p->close();
-                _CLDECDELETE(p);
-            }
-        }
+//        {
+//            std::vector<lucene::store::Directory*> srcDirs;
+//            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index10"));
+//            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index11"));
+//            srcDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index12"));
+//            std::vector<lucene::store::Directory*> destDirs;
+//            destDirs.push_back(FSDirectory::getDirectory("/mnt/disk2/luen/clucene/index13"));
+//            indexCompaction(srcDirs, destDirs, datas[name].size() * 3 * 3);
+//            for (auto& p : srcDirs) {
+//                p->close();
+//                _CLDECDELETE(p);
+//            }
+//            for (auto& p : destDirs) {
+//                p->close();
+//                _CLDECDELETE(p);
+//            }
+//        }
     }
 
     // search
-    {
-            std::vector<int32_t> v;
-            v.push_back(1);
-            v.push_back(10);
-            v.push_back(11);
-            v.push_back(12);
-            v.push_back(13);
-            for (auto idx : v) {
-                std::cout << "---------------------" << std::endl;
-                std::string path = "/mnt/disk2/yangsiyu/clucene/index" + std::to_string(idx);
-                IndexReader* reader = IndexReader::open(path.c_str());
-                IndexSearcher index_searcher(reader);
-                for (int i = 0; i < 1; i++) {
-            {
-                TimeGuard time("term query1");
-                Term* t = _CLNEW Term(_T("description"), _T("telerik"));
-                Query* query = _CLNEW TermQuery(t);
-                _CLLDECDELETE(t);
-
-                std::vector<int32_t> result;
-                index_searcher._search(query,
-                                       [&result](const int32_t docid, const float_t /*score*/) {
-                                           result.push_back(docid);
-                                       });
-                std::cout << "term result: " << result.size() << std::endl;
-                _CLLDELETE(query);
-            }
-            {
-                TimeGuard time("term query2");
-                Term* t = _CLNEW Term(_T("description"), _T("kendo"));
-                Query* query = _CLNEW TermQuery(t);
-                _CLLDECDELETE(t);
-
-                std::vector<int32_t> result;
-                index_searcher._search(query,
-                                       [&result](const int32_t docid, const float_t /*score*/) {
-                                           result.push_back(docid);
-                                       });
-                std::cout << "term result: " << result.size() << std::endl;
-                _CLLDELETE(query);
-            }
-            {
-                TimeGuard time("term query3");
-                Term* t = _CLNEW Term(_T("description"), _T("themes"));
-                Query* query = _CLNEW TermQuery(t);
-                _CLLDECDELETE(t);
-
-                std::vector<int32_t> result;
-                index_searcher._search(query,
-                                       [&result](const int32_t docid, const float_t /*score*/) {
-                                           result.push_back(docid);
-                                       });
-                std::cout << "term result: " << result.size() << std::endl;
-                _CLLDELETE(query);
-            }
-            {
-                TimeGuard time("phrase query1");
-                Term* term1 = _CLNEW Term(_T( "description" ), _T( "telerik" ));
-                Term* term2 = _CLNEW Term(_T( "description" ), _T( "kendo" ));
-                Term* term3 = _CLNEW Term(_T( "description" ), _T( "themes" ));
-                PhraseQuery* query = _CLNEW PhraseQuery();
-                query->add(term1);
-                query->add(term2);
-                query->add(term3);
-                _CLLDECDELETE(term1);
-                _CLLDECDELETE(term2);
-                _CLLDECDELETE(term3);
-
-                std::vector<int32_t> result;
-                index_searcher._search(query,
-                                       [&result](const int32_t docid, const float_t /*score*/) {
-                                           result.push_back(docid);
-                                       });
-                std::cout << "phrase result: " << result.size() << std::endl;
-                _CLLDELETE(query);
-            }
-            {
-                TimeGuard time("phrase query2");
-                Term* term1 = _CLNEW Term(_T( "description" ), _T( "telerik" ));
-                PhraseQuery* query = _CLNEW PhraseQuery();
-                query->add(term1);
-                _CLLDECDELETE(term1);
-
-                std::vector<int32_t> result;
-                index_searcher._search(query,
-                                       [&result](const int32_t docid, const float_t /*score*/) {
-                                           result.push_back(docid);
-                                       });
-                std::cout << "phrase result: " << result.size() << std::endl;
-                _CLLDELETE(query);
-            }
-                }
-                reader->close();
-                _CLDELETE(reader);
-            }
-    }
+//    {
+//            std::vector<int32_t> v;
+//            v.push_back(1);
+//            v.push_back(10);
+//            v.push_back(11);
+//            v.push_back(12);
+//            v.push_back(13);
+//            for (auto idx : v) {
+//                std::cout << "---------------------" << std::endl;
+//                std::string path = "/mnt/disk2/luen/clucene/index" + std::to_string(idx);
+//                IndexReader* reader = IndexReader::open(path.c_str());
+//                IndexSearcher index_searcher(reader);
+//                for (int i = 0; i < 1; i++) {
+//            {
+//                TimeGuard time("term query1");
+//                Term* t = _CLNEW Term(_T("description"), _T("telerik"));
+//                Query* query = _CLNEW TermQuery(t);
+//                _CLLDECDELETE(t);
+//
+//                std::vector<int32_t> result;
+//                index_searcher._search(query,
+//                                       [&result](const int32_t docid, const float_t /*score*/) {
+//                                           result.push_back(docid);
+//                                       });
+//                std::cout << "term result: " << result.size() << std::endl;
+//                _CLLDELETE(query);
+//            }
+//            {
+//                TimeGuard time("term query2");
+//                Term* t = _CLNEW Term(_T("description"), _T("kendo"));
+//                Query* query = _CLNEW TermQuery(t);
+//                _CLLDECDELETE(t);
+//
+//                std::vector<int32_t> result;
+//                index_searcher._search(query,
+//                                       [&result](const int32_t docid, const float_t /*score*/) {
+//                                           result.push_back(docid);
+//                                       });
+//                std::cout << "term result: " << result.size() << std::endl;
+//                _CLLDELETE(query);
+//            }
+//            {
+//                TimeGuard time("term query3");
+//                Term* t = _CLNEW Term(_T("description"), _T("themes"));
+//                Query* query = _CLNEW TermQuery(t);
+//                _CLLDECDELETE(t);
+//
+//                std::vector<int32_t> result;
+//                index_searcher._search(query,
+//                                       [&result](const int32_t docid, const float_t /*score*/) {
+//                                           result.push_back(docid);
+//                                       });
+//                std::cout << "term result: " << result.size() << std::endl;
+//                _CLLDELETE(query);
+//            }
+//            {
+//                TimeGuard time("phrase query1");
+//                Term* term1 = _CLNEW Term(_T( "description" ), _T( "telerik" ));
+//                Term* term2 = _CLNEW Term(_T( "description" ), _T( "kendo" ));
+//                Term* term3 = _CLNEW Term(_T( "description" ), _T( "themes" ));
+//                PhraseQuery* query = _CLNEW PhraseQuery();
+//                query->add(term1);
+//                query->add(term2);
+//                query->add(term3);
+//                _CLLDECDELETE(term1);
+//                _CLLDECDELETE(term2);
+//                _CLLDECDELETE(term3);
+//
+//                std::vector<int32_t> result;
+//                index_searcher._search(query,
+//                                       [&result](const int32_t docid, const float_t /*score*/) {
+//                                           result.push_back(docid);
+//                                       });
+//                std::cout << "phrase result: " << result.size() << std::endl;
+//                _CLLDELETE(query);
+//            }
+//            {
+//                TimeGuard time("phrase query2");
+//                Term* term1 = _CLNEW Term(_T( "description" ), _T( "telerik" ));
+//                PhraseQuery* query = _CLNEW PhraseQuery();
+//                query->add(term1);
+//                _CLLDECDELETE(term1);
+//
+//                std::vector<int32_t> result;
+//                index_searcher._search(query,
+//                                       [&result](const int32_t docid, const float_t /*score*/) {
+//                                           result.push_back(docid);
+//                                       });
+//                std::cout << "phrase result: " << result.size() << std::endl;
+//                _CLLDELETE(query);
+//            }
+//                }
+//                reader->close();
+//                _CLDELETE(reader);
+//            }
+//    }
 
     return 0;
 }
