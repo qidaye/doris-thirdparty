@@ -1259,12 +1259,13 @@ void IndexWriter::resetMergeExceptions() {
 
 void IndexWriter::indexCompaction(std::vector<lucene::store::Directory *> &src_dirs,
                                   std::vector<lucene::store::Directory *> dest_dirs,
-                                  std::vector<std::vector<std::pair<uint32_t, uint32_t>>> trans_vec,
+                                  const std::vector<std::vector<std::pair<uint32_t, uint32_t>>> trans_vec,
                                   std::vector<uint32_t> dest_index_docs) {
     CND_CONDITION(src_dirs.size() > 0, "Source directory not found.");
     CND_CONDITION(dest_dirs.size() > 0, "Destination directory not found.");
     this->_trans_vec = std::move(trans_vec);
 
+    // 构建 reader/writer 分别拆单独函数
     // create segment readers
     int numIndices = src_dirs.size();
 
@@ -1304,6 +1305,8 @@ void IndexWriter::indexCompaction(std::vector<lucene::store::Directory *> &src_d
                 FINALLY_CLOSE_OUTPUT(null_bitmap_in);
             }
         } catch (CLuceneError &e) {
+            // 需要 throw
+            // _CLFINALLY
             FINALLY_CLOSE_OUTPUT(null_bitmap_in);
         }
     }
@@ -1327,7 +1330,7 @@ void IndexWriter::indexCompaction(std::vector<lucene::store::Directory *> &src_d
 
     std::vector<lucene::index::IndexWriter *> destIndexWriterList;
     std::vector<lucene::store::IndexOutput *> nullBitmapIndexOutputList;
-    try {
+    try {// try 前提，包住所有异常代码
         // check hasProx, indexVersion
         bool hasProx = false;
         IndexVersion indexVersion = IndexVersion::kV1;
@@ -1569,6 +1572,7 @@ void IndexWriter::mergeFields(bool hasProx, IndexVersion indexVersion) {
 
     //Condition check to see if reader points to a valid instanceL
     CND_CONDITION(readers.size() == 0, "No IndexReader found");
+    // 检查 readers 是否为空
     // fields of all readers are the same, so we pick the first one.
     IndexReader *reader = readers[0];
 
@@ -1621,6 +1625,7 @@ protected:
 
 };
 
+// 函数拆分，try-catch 包住所有异常代码，尽量用智能指针
 void IndexWriter::mergeTerms(bool hasProx, IndexVersion indexVersion) {
     auto queue = _CLNEW SegmentMergeQueue(readers.size());
     auto numSrcIndexes = readers.size();
@@ -1645,6 +1650,7 @@ void IndexWriter::mergeTerms(bool hasProx, IndexVersion indexVersion) {
             _CLDELETE(smi);
         }
     }
+    // array 换成 vector
     auto **match = _CL_NEWARRAY(SegmentMergeInfo *, readers.size());
 
     while (queue->size() > 0) {

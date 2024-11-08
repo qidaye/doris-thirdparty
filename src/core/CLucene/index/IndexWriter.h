@@ -279,9 +279,11 @@ class CLUCENE_EXPORT IndexWriter:LUCENE_BASE {
   mutable bool hitOOM;
 
   // index compaction params
+  // 成员变量都尝试改为智能指针
   std::vector<std::vector<std::pair<uint32_t, uint32_t>>> _trans_vec;
   // dest indexes numbers
   int32_t numDestIndexes;
+  // readers 改为unique_ptr，自定义析构方法
   std::vector<IndexReader*> readers;
   //Field Infos for the FieldInfo instances of all fields
   FieldInfos* fieldInfos;
@@ -315,6 +317,9 @@ public:
      *         pair.second indicates doc id of destination index
      * @param dest_index_docs destination indices doc count list
      */
+    // 1. 静态方法
+    // 2. trans_vec 改为引用传递
+    // 3. 成员变量改为指针，或者去除
     void indexCompaction(std::vector<lucene::store::Directory*>& src_dirs,
                             std::vector<lucene::store::Directory*> dest_dirs,
                             std::vector<std::vector<std::pair<uint32_t, uint32_t>>> trans_vec,
